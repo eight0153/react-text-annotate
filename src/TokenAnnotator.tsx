@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import Mark, {MarkProps} from './Mark'
-import {selectionIsEmpty, selectionIsBackwards, splitTokensWithOffsets} from './utils'
+import {selectionIsBackwards, selectionIsEmpty, splitTokensWithOffsets} from './utils'
 
 interface TokenProps {
   i: number
@@ -63,7 +63,7 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
     let end = parseInt(selection.focusNode.parentElement.getAttribute('data-i'), 10)
 
     if (selectionIsBackwards(selection)) {
-      ;[start, end] = [end, start]
+      [start, end] = [end, start]
     }
 
     end += 1
@@ -94,13 +94,15 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
   render() {
     const {tokens, value, style, renderMark} = this.props
     const splits = splitTokensWithOffsets(tokens, value)
+    let valueIndex = 0
+
     return (
       <div style={style} ref={this.rootRef}>
         {splits.map(
-          (split, i) =>
+          (split) =>
             split.mark ? (
               renderMark({
-                key: `${split.start}-${split.end}`,
+                key: `${split.start}-${split.end}-${value[valueIndex++].tag}`,
                 ...split,
                 onClick: this.handleSplitClick,
               })
