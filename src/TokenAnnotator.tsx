@@ -68,28 +68,11 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
 
         end += 1;
 
-        const value = [
+        this.props.onChange([
             ...this.props.value,
             this.getSpan({start, end, tokens: this.props.tokens.slice(start, end)})
-        ];
+        ]);
 
-        // Sort annotations so that annotations added out of order line up with the correct split, and so that the right
-        // key (and tag) is used for the span.
-        value.sort((a, b) => {
-            if (a.start < b.start) {
-                return -1;
-            } else if (a.start > b.start) {
-                return 1;
-            } else if (a.end < b.end) {
-                return -1;
-            } else if (a.end > b.end) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-
-        this.props.onChange(value);
         window.getSelection().empty()
     };
 
@@ -112,7 +95,6 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
     render() {
         const {tokens, value, style, renderMark} = this.props;
         const splits = splitTokensWithOffsets(tokens, value);
-        let valueIndex = 0;
 
         return (
             <div style={style} ref={this.rootRef}>
@@ -120,7 +102,7 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
                     (split) =>
                         split.mark ? (
                             renderMark({
-                                key: `${split.start}-${split.end}-${value[valueIndex++].tag}`,
+                                key: `${split.start}-${split.end}-${split.tag}`,
                                 ...split,
                                 onClick: this.handleSplitClick,
                             })
