@@ -42,22 +42,6 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
 
     componentWillUnmount() {
         this.rootRef.current.removeEventListener('mouseup', this.handleMouseUp);
-
-        // Sort annotations so that annotations added out of order line up with the correct split, and so that the right
-        // key (and tag) is used for the span.
-        this.props.value.sort((a, b) => {
-            if (a.start < b.start) {
-                return -1;
-            } else if (a.start > b.start) {
-                return 1;
-            } else if (a.end < b.end) {
-                return -1;
-            } else if (a.end > b.end) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
     }
 
     handleMouseUp = () => {
@@ -84,10 +68,28 @@ class TokenAnnotator extends React.Component<TokenAnnotatorProps, {}> {
 
         end += 1;
 
-        this.props.onChange([
+        const value = [
             ...this.props.value,
-            this.getSpan({start, end, tokens: this.props.tokens.slice(start, end)}),
-        ]);
+            this.getSpan({start, end, tokens: this.props.tokens.slice(start, end)})
+        ];
+
+        // Sort annotations so that annotations added out of order line up with the correct split, and so that the right
+        // key (and tag) is used for the span.
+        value.sort((a, b) => {
+            if (a.start < b.start) {
+                return -1;
+            } else if (a.start > b.start) {
+                return 1;
+            } else if (a.end < b.end) {
+                return -1;
+            } else if (a.end > b.end) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        this.props.onChange(value);
         window.getSelection().empty()
     };
 
