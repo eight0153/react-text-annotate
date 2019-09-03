@@ -36,8 +36,9 @@
   },
   "scripts": {
     "dev": "cd example && webpack-dev-server --hot --history-api-fallback --mode development",
+    "build": "run-script-os",
     "build:nix": "rm -rf lib && tsc -p ./ --declaration --outDir lib/",
-    "build:windows": "rd /s /q lib && tsc -p .\\ --declaration --outDir lib\\",
+    "build:windows": "(if exist lib rd /s /q lib) && tsc -p .\\ --declaration --outDir lib\\",
     "prepublish": "npm run build",
     "prepare": "npm run build",
     "predeploy": "cd example && webpack --mode production",
